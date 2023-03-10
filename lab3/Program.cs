@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace lab3
 {
@@ -51,9 +52,23 @@ namespace lab3
             FileStream fileStream = new FileStream("CarsCollection.xml", FileMode.Create);
             fileStream.Close();
             SerializeList(myCars, fileStream.Name);
-            myCars = DeserializeList(fileStream.Name);
+            LinqSerialization(myCars);
+            myCars = DeserializeList(fileStream.Name) as List<Car>;
+            XPathCalculations(myCars);
         }
-        
+        private static void LinqSerialization(List<Car> myCars)
+        {
+            IEnumerable<XElement> nodes = myCars.Select(n =>
+                new XElement("car",
+                    //new XElement("model", n.model),
+                    new XElement("engine",
+                        new XAttribute("model", n.motor.model),
+                        new XElement("displacement", n.motor.displacement),
+                        new XElement("horsePower", n.motor.horsePower),
+                    new XElement("year", n.year))));
+            XElement rootNode = new XElement("cars", nodes);
+            rootNode.Save("CarsCollectionLinq.xml");
+        }
         public static List<Car> DeserializeList(string fileName)
         {
             List<Car> deserializedList = new List<Car>();
@@ -70,6 +85,18 @@ namespace lab3
             TextWriter fileToSerialize = new StreamWriter(fileName);
             serializedList.Serialize(fileToSerialize, listOfCars);
             fileToSerialize.Close();
+        }
+
+        public static void XPathCalculations(List<Car> listOfCars)
+        {
+            XElement rootNode = XElement.Load("CarsCollection.xml");
+            double avgHP = (double)rootNode.XPathEvaluate("sum(//car/engine[@model!=\"TDI\"]/horsePower) div count(//car/engine[@model!=\"TDI\"]/horsePower)"); 
+            Console.WriteLine("Srednia: " + avgHP.ToString());
+            IEnumerable<XElement> models = rootNode.XPathSelectElements("//car[not(preceding-sibling::car/model/text() = model/text())]");
+            Console.WriteLine("Modele samochodow bez powtorzen");
+            foreach (var model in models)
+                Console.Write(model.ToString());
+            Console.ReadKey();
         }
     }
 }

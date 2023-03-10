@@ -29,11 +29,11 @@ namespace lab3
             // zad 1 
             var a6Query =
                 from car in myCars
-                where car.GetModel() == "A6"
+                where car.model == "A6"
                 select new
                 {
-                    engineType = car.GetEngine().GetModel() == "TDI" ? "diesel" : "petrol",
-                    hppl = car.GetEngine().GetHppl()
+                    engineType = car.motor.model == "TDI" ? "diesel" : "petrol",
+                    hppl = car.motor.GetHppl()
                 };
             var engineQuery = 
                 from engine in a6Query
@@ -45,27 +45,15 @@ namespace lab3
                 };
             foreach( var engine in engineQuery)
                 Console.WriteLine("{0}: {1}", engine.EngineType, engine.AverageHppl);
+            Console.ReadKey();
 
             //zad 2
-            FileStream fileStream = new FileStream("CarsCollectionLinq.xml", FileMode.Create);
+            FileStream fileStream = new FileStream("CarsCollection.xml", FileMode.Create);
             fileStream.Close();
             SerializeList(myCars, fileStream.Name);
-            LinqSerialization(myCars);
             myCars = DeserializeList(fileStream.Name);
         }
-        private static void LinqSerialization(List<Car> myCars)
-        {
-            IEnumerable<XElement> nodes = myCars.Select(n =>
-                new XElement("car",
-                    //new XElement("model", n.GetModel()),
-                    new XElement("engine",
-                        new XAttribute("model", n.GetEngine().GetModel()),
-                        new XElement("displacement", n.GetEngine().GetDisplacement()),
-                        new XElement("horsePower", n.GetEngine().GetHorsePower()),
-                    new XElement("year", n.GetYear()))));
-            XElement rootNode = new XElement("cars", nodes);
-            rootNode.Save("CarsCollectionLinq.xml");
-        }
+        
         public static List<Car> DeserializeList(string fileName)
         {
             List<Car> deserializedList = new List<Car>();
@@ -79,7 +67,7 @@ namespace lab3
         public static void SerializeList(List<Car> listOfCars, string fileName)
         {
             XmlSerializer serializedList= new XmlSerializer(typeof(List<Car>), new XmlRootAttribute("cars"));
-            FileStream fileToSerialize = new FileStream(fileName, FileMode.Open);
+            TextWriter fileToSerialize = new StreamWriter(fileName);
             serializedList.Serialize(fileToSerialize, listOfCars);
             fileToSerialize.Close();
         }

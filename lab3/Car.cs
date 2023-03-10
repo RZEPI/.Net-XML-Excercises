@@ -7,31 +7,19 @@ using System.Xml.Serialization;
 
 namespace lab3
 {
-   
+    [XmlType("car")]
     public class Car
     {
-        private string model;
+        public string model;
         [XmlElement(ElementName = "engine")]
-        private Engine motor;
-        private int year;        
+        public Engine motor;
+        public int year;
         public Car(){}
         public Car(string model, Engine motor, int year)
         {
             this.model = model;
             this.motor = motor;
             this.year = year;
-        }
-        public string GetModel()
-        {
-            return this.model;
-        }
-        public int GetYear()
-        {
-            return this.year;
-        }
-        public Engine GetEngine()
-        { 
-            return this.motor; 
         }
     }
 }

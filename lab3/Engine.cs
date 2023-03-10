@@ -23,18 +23,6 @@ namespace lab3
             this.model = model;
         }
 
-        public string GetModel()
-        {
-            return this.model;
-        }
-        public double GetDisplacement()
-        {
-            return this.displacement;
-        }
-        public double GetHorsePower()
-        {
-            return this.horsePower;
-        }
         public double GetHppl()
         {
             double hppl = this.horsePower / this.displacement;

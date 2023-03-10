@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace lab3
 {
-    internal class Engine
+    public class Engine
     {
         private double displacement;
         private double horsePower;
@@ -22,6 +22,14 @@ namespace lab3
         public string GetModel()
         {
             return this.model;
+        }
+        public double GetDisplacement()
+        {
+            return this.displacement;
+        }
+        public double GetHorsePower()
+        {
+            return this.horsePower;
         }
         public double GetHppl()
         {
